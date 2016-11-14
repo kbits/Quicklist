@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<!-- manifest noch ein wenig durchdenken, kann man manfifest auch lokal speicheren?? 
+     liste im eingeabefeld aufscheinen alssen und dann mit anfangsbuchstaben filtern
+     auswahl in das input übernehemen
+
+
+-->
+<html manifest="appcache.php">
+
+<head>
+<title>QuickList</title>
+<meta name="author" content="kbits.at" />
+<meta charset="UTF-8" />
+
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+
+<link rel="icon" href="favicon.ico" type="image/x-icon" />
+<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+<link rel="apple-touch-icon" href="icon57.png">
+<link rel="apple-touch-icon" size="72x72" href="icon72.png">
+<link rel="apple-touch-icon" size="114x114" href="icon144.png">
+
+<link rel="apple-touch-startup-image" href="./img/Default.png" />
+<link rel="apple-touch-startup-image" sizes="640x960" href="./img/Default@2x.png" />
+
+<link rel="stylesheet"  href="./css/quicklist.css" />
+
+<script src="./js/jquery.min.js"></script>
+<script src="./js/jgestures.min.js"></script>
+<script src="./js/quicklist.js"></script>
+<!--
+<script>
+var appCache = window.applicationCache;
+
+switch (appCache.status) {
+  case appCache.UNCACHED: // UNCACHED == 0
+    alert ('UNCACHED');
+    break;
+  case appCache.IDLE: // IDLE == 1
+    alert ('IDLE');
+    break;
+  case appCache.CHECKING: // CHECKING == 2
+    alert ('CHECKING');
+    break;
+  case appCache.DOWNLOADING: // DOWNLOADING == 3
+    alert ('DOWNLOADING');
+    break;
+  case appCache.UPDATEREADY:  // UPDATEREADY == 4
+    alert ('UPDATEREADY');
+    break;
+  case appCache.OBSOLETE: // OBSOLETE == 5
+    alert ('OBSOLETE');
+    break;
+  default:
+    alert ('UKNOWN CACHE STATUS');
+    break;
+};
+</script>
+-->
+</head>
+<body>
+<div id="main">
+<!--
+<iframe id="adver" src="http://dev.kbits.at/adver/adver.php" frameborder="0" scrolling="no"></iframe>
+-->
+<a href="http://webapp.kbits.at/quicklist/help.html" target="_blank"><img src="./img/quicklist.jpg"></a>
+
+<div id="divmyinput">
+<img id="btoptions" src="./img/menu.png">
+<input id="myinput" list="myinput" value="" size="27" />
+<img id="addtomylist" src="./img/add.png">
+</div>
+
+<!-- Optionen -->
+<div id="options">
+  <b style="font-size:1.5em">QuickList Setup</b>
+  <a href="help.html" target="_blank"><img id="info" src="./img/info.png"></a>
+  <p/>
+  <hr/>
+  <img class="pattern" src="./img/pattern0.jpg">
+  <img class="pattern" src="./img/pattern1.jpg">
+  <img class="pattern" src="./img/pattern2.jpg">
+  <img class="pattern" src="./img/pattern3.jpg">
+  <img class="pattern" src="./img/pattern4.jpg">
+  <img class="pattern" src="./img/pattern5.jpg">
+  <hr/>
+  <ul id="editMyList">
+  <li></li>
+  </ul>
+  <div style="weight:100%; text-align:center;">
+  <hr/>
+    <input type="button" class="button" value="! DELETE ALL !" name="" onclick="resetAll();"><br/>
+  <hr/>
+  Version: 2013-10-25 
+  </div>
+</div><!-- end options -->
+
+<script>
+// design ändern
+$('.pattern').click( function() {
+  var pattern = $(this).attr('src');
+  var activepage = $('.active').val();
+   $('#page'+activepage).css('background-image', 'url("' + pattern + '")');
+  $('#options').hide();
+  $('#btoptions').attr("src","./img/menu.png");
+  saveContents($('.active').val());
+});
+</script>
+
+
+<!-- list mylist -->
+<div id="mylist">
+
+</div>
+
+<!-- to clone li -->
+<li class="listitem" style="display:none">
+
+<input class="number localStore" type="number"  value="1" size="3" maxlength="5" />
+<input class="foot localStore" list="foot" value="" />
+<img class="delete"src="./img/delete.png" style="display:yes";>
+<img class="check" src="./img/uncheck.png" style="display:none";>
+
+</li>
+
+<!-- Auswahl der Listen -->
+<div id="selectPage">
+  <input id="btpage1" class="btpage active" type="image" value="1" src="./img/selectListActive.png" />
+  <input id="btpage2" class="btpage" type="image" value="2" src="./img/selectList.png" />
+  <input id="btpage3" class="btpage" type="image" value="3" src="./img/selectList.png" />
+</div><!-- ende Auswahl der Listen -->
+
+<!-- Pages -->
+<div id="page1" class="page">
+<img class="deletList" src="./img/deleteList.png">
+<input id="listName1" class="listName" value="Liste 1" size="18" />
+<!--<img class="shareList" src="./img/share.png">
+ die listen -->
+<ul id="liste1" class="liste">
+</ul>
+</div>
+<div id="page2" class="page">
+<img class="deletList" src="./img/deleteList.png">
+<input id="listName2" class="listName" value="Liste 2" size="18" />
+<!-- <img class="shareList" src="./img/share.png"> -->
+<ul id="liste2" class="liste">
+</ul>
+</div>
+<div id="page3" class="page">
+<img class="deletList" src="./img/deleteList.png">
+<input id="listName3" class="listName" value="Liste 3" size="18" />
+<!-- <img class="shareList" src="./img/share.png"> -->
+<ul id="liste3" class="liste">
+</ul>
+</div>
+</div><!-- end main -->
+
+<script>
+// share
+$('.shareList').click( function() {
+var test="test";
+document.location.href = "mailto:?body=test %0d%0a test2";
+});
+</script>
+
+<script>
+// listname CSS verändern
+$('.listName').click( function() {
+  $(this).css("background-color","#ffffff");
+});
+  
+ $('.listName').focusout( function() {
+  $(this).css("background-color","#eeeeee");
+  saveContents($('.active').val());
+});   
+</script>
+
+<script>
+// SWIPE 
+$('.page').bind('swipeone', function (event, obj) {
+   var direction=obj.description.split(":")[2]
+   if (direction=="left"){
+     pagenr = parseInt($('.active').val());
+     if (pagenr < 3) {
+     pagenr++;
+     //console.log(pagenr);
+     showPage(pagenr);
+     }
+     else {pagenr =1; showPage(pagenr);}
+   } else if (direction=="right"){
+     pagenr = parseInt($('.active').val());
+     if (pagenr > 1) {
+     pagenr--;
+     //console.log(pagenr);
+     showPage(pagenr);
+     }
+     else {pagenr =3; showPage(pagenr);}
+   }
+});
+</script>
+
+
+
+
+<script>
+// Zuweisung der Funktione
+
+$('.delete').live('click', function() {
+    $(this).parent().remove();
+    saveContents($('.active').val());
+});
+
+$('.check').live('click', function() {
+  if ( $(this).attr("src") == "./img/check.png" ) {
+  $(this).attr("src","./img/uncheck.png");
+  }
+  else {
+  $(this).attr("src","./img/check.png");
+  }
+  saveContents($('.active').val());
+});
+
+$('.number').live('click', function() {
+    $(this).val(''); 
+});
+
+// show+hiden mylist
+  $('#myinput').click( function() {
+   $('#options').hide();
+
+   //$('#mylist').has('input').show(); 
+   $('#btoptions').attr("src","./img/close.png");
+   $('#mylist').show();   
+  });
+  
+  
+$('.close').live('click', function() {
+  //$('#options').hide();
+  //$('#mylist').hide();
+  //saveContents($('.active').val());
+  $(this).parent().hide();
+  });
+  
+
+//clon listitem to list
+$('#mylist input').live('click', function() {
+   text = $(this).val();
+   clone($('.active').val());
+   $('#btoptions').attr("src","./img/menu.png");
+   saveContents($('.active').val());
+  });
+  
+
+// add myinput to mylist li and 
+// clon listitem to list  
+$('#addtomylist').click( function() {
+   text = $('#myinput').val();
+   if (text != "") {
+   clone($('.active').val());
+    $('#mylist').append('<input type="button" class="button" value="'+text+'" />');
+    $('#btoptions').attr("src","./img/menu.png");
+    }
+    else {
+      clone($('.active').val());
+    }
+    sortUL("#mylist");
+    saveContents($('.active').val()); 
+});
+
+$('.localStore').live('focusout', function() {
+   saveContents($('.active').val());
+});
+
+$('#btoptions').click( function() {
+  if ($(this).attr("src") != "./img/close.png"){
+  cloneMyList();
+  $('#mylist').hide();
+  $('#options').show();
+  $(this).attr("src","./img/close.png");
+  }
+  else {
+  $('#mylist').hide();
+  $('#options').hide();
+  $(this).attr("src","./img/menu.png");
+  
+  }
+});
+
+
+//delete item form mylist
+$('#editMyList input').live('click', function() {
+   $(this).remove();
+   cloneEditMyList();
+   saveContents($('.active').val());
+  });
+
+$('.deletList').click( function() {
+  resetContent($('.active').val());
+});
+
+
+// Auswahl der Listen
+$('#selectPage input').live('click', function() {
+   pagenr = $(this).val();
+   showPage(pagenr); 
+  });
+</script>
+
+
+<script>
+// Aufruf Funktion nach Document.Ready
+$(document).ready(function() {
+  // hier die Anzahl für die pro Version ändern
+  restoreContents(3);
+  
+  // aktive page laden und wenn nicht definiert dann page1
+  var activepage = localStorage['activepage'];
+  if(typeof activepage == 'undefined') {
+    activepage = "1";
+    $('.listName').val("QuickList");
+  }  
+  showPage(activepage);
+
+});
+
+</script>
+
+
+</body>
+</html>
